@@ -1,16 +1,4 @@
-const { Pool } = require('pg');
-const properties = require('./json/properties.json');
-const users = require('./json/users.json');
-
-// Get Environmental Variables
-require('dotenv').config();
-
-const pool = new Pool({
-  "user": process.env.DB_USER,
-  "password": process.env.DB_PASS,
-  "host": process.env.DB_HOST,
-  "database": process.env.DB_NAME
-});
+const db = require('../db');
 
 /// Users
 
@@ -25,7 +13,7 @@ const getUserWithEmail = function(email) {
     FROM users
     WHERE email = $1
   `;
-  return pool
+  return db
     .query(queryString, [email])
     .then(res => res.rows.length ? res.rows[0] : null);
 };
@@ -42,7 +30,7 @@ const getUserWithId = function(id) {
     FROM users
     WHERE id = $1
   `;
-  return pool
+  return db
     .query(queryString, [id])
     .then(res => res.rows.length ? res.rows[0] : null);
 };
@@ -60,7 +48,7 @@ const addUser =  function(user) {
     RETURNING *;
   `;
   const values = [ user.name, user.email, user.password ];
-  return pool
+  return db
     .query(queryString, values)
     .then(res => res.rows.length ? res.rows[0] : null);
 };
@@ -85,7 +73,7 @@ const getAllReservations = function(guest_id, limit = 10) {
     LIMIT $2;
   `;
   const values = [ guest_id, limit ];
-  return pool
+  return db
     .query(queryString, values)
     .then(res => res.rows);
 };
@@ -160,7 +148,7 @@ const getAllProperties = function(options, limit = 10) {
     LIMIT $${queryParams.length};
   `;
 
-  return pool
+  return db
     .query(queryString, [limit])
     .then(res => res.rows);
 };
@@ -195,7 +183,7 @@ const addProperty = function(property) {
     property.post_code
   ];
 
-  return pool
+  return db
     .query(queryString, values)
     .then(res => res.rows.length ? res.rows[0] : null);
 };
