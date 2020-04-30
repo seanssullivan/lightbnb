@@ -79,6 +79,24 @@ const getAllReservations = function(guest_id, limit = 10) {
 };
 exports.getAllReservations = getAllReservations;
 
+const addReservation = function(reservation) {
+  const queryString = `
+    INSERT INTO reservations (guest_id, property_id, start_date, end_date)
+    VALUES ($1, $2, $3, $4)
+    RETURNING *;
+  `;
+  const values = [
+    reservation.guest_id,
+    reservation.property_id,
+    reservation.start_date,
+    reservation.end_date
+  ];
+  return db
+    .query(queryString, values)
+    .then(res => res.rows.length ? res.rows[0] : null);
+};
+exports.addReservation = addReservation;
+
 /// Properties
 
 /**
