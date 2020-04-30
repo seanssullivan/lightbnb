@@ -37,10 +37,16 @@ exports.getUserWithEmail = getUserWithEmail;
  * @return {Promise<{}>} A promise to the user.
  */
 const getUserWithId = function(id) {
-  return Promise.resolve(users[id]);
+  const queryString = `
+    SELECT id, name, email, password
+    FROM users
+    WHERE id = $1
+  `;
+  return pool
+    .query(queryString, [id])
+    .then(res => res.rows.length ? res.rows[0] : null);
 };
 exports.getUserWithId = getUserWithId;
-
 
 /**
  * Add a new user to the database.
@@ -48,10 +54,15 @@ exports.getUserWithId = getUserWithId;
  * @return {Promise<{}>} A promise to the user.
  */
 const addUser =  function(user) {
-  const userId = Object.keys(users).length + 1;
-  user.id = userId;
-  users[userId] = user;
-  return Promise.resolve(user);
+  const queryString = `
+    INSERT INTO users (name, email, password)
+    VALUES ($1, $2, $3)
+    RETURNING *;
+  `;
+  const values = [ user.name, user.email, user.password ];
+  return pool
+    .query(queryString, values)
+    .then(res => res.rows.length ? res.rows[0] : null);
 };
 exports.addUser = addUser;
 
