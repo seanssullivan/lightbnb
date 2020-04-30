@@ -1,5 +1,15 @@
+const { Pool } = require('pg');
 const properties = require('./json/properties.json');
 const users = require('./json/users.json');
+
+require('dotenv').config();
+
+const pool = new Pool({
+  "user": process.env.DB_USER,
+  "password": process.env.DB_PASS,
+  "host": process.env.DB_HOST,
+  "database": procvess.env.DB_NAME
+});
 
 /// Users
 
@@ -67,11 +77,14 @@ exports.getAllReservations = getAllReservations;
  * @return {Promise<[{}]>}  A promise to the properties.
  */
 const getAllProperties = function(options, limit = 10) {
-  const limitedProperties = {};
-  for (let i = 1; i <= limit; i++) {
-    limitedProperties[i] = properties[i];
-  }
-  return Promise.resolve(limitedProperties);
+  const queryString = `
+    SELECT *
+    FROM properties
+    LIMIT $1
+  `;
+  return pool
+    .query(queryString, [limit])
+    .then(res => res.rows);
 }
 exports.getAllProperties = getAllProperties;
 
