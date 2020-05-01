@@ -91,6 +91,7 @@ const addReservation = function(reservation) {
     reservation.start_date,
     reservation.end_date
   ];
+  console.log(values);
   return db
     .query(queryString, values)
     .then(res => res.rows.length ? res.rows[0] : null);

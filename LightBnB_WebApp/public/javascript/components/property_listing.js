@@ -22,9 +22,15 @@ $(() => {
             <div class="property-listing__price">$${property.cost_per_night/100.0}/night</div>
           </footer>
         </section>
+        <button class="reservation_button" value="${property.id}">Make Reservation</button>
       </article>
-    `
+    `;
   }
+
+  $("body").on('click', '.reservation_button', (event) => {
+    views_manager.show('reservation');
+    $('#propertyId').val(event.target.value);
+  });
 
   window.propertyListing.createListing = createListing;
 

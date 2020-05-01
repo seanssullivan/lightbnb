@@ -25,7 +25,16 @@ module.exports = function(router, database) {
 
   router.post('/reservations', (req, res) => {
     const userId = req.session.userId;
-    database.addReservation({...req.body, owner_id: userId})
+    const propertyId = req.body.propertyId;
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
+
+    database.addReservation({
+      guest_id: userId,
+      property_id: propertyId,
+      start_date: startDate,
+      end_date: endDate
+    })
       .then(reservation => {
         res.send(reservation);
       })
